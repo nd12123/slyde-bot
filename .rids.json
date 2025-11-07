@@ -1,0 +1,62 @@
+[
+  [
+    "c4849f859435708cc420865b5575c0d7",
+    {
+      "rid": "c4849f859435708cc420865b5575c0d7",
+      "telegramId": 625340542,
+      "createdAt": "2025-11-07T15:33:25.876Z",
+      "expiresAt": "2025-11-07T15:48:25.876Z",
+      "claimed": false
+    }
+  ],
+  [
+    "34cd3b21e17ed1660a37bc1ed88509b7",
+    {
+      "rid": "34cd3b21e17ed1660a37bc1ed88509b7",
+      "telegramId": 625340542,
+      "createdAt": "2025-11-07T15:33:58.660Z",
+      "expiresAt": "2025-11-07T15:48:58.660Z",
+      "claimed": false
+    }
+  ],
+  [
+    "416531a1b167b7e5d9c91d9bc74e1f05",
+    {
+      "rid": "416531a1b167b7e5d9c91d9bc74e1f05",
+      "telegramId": 625340542,
+      "createdAt": "2025-11-07T15:43:50.515Z",
+      "expiresAt": "2025-11-07T15:58:50.515Z",
+      "claimed": false
+    }
+  ],
+  [
+    "0b01100d13e075334994717fd29943f8",
+    {
+      "rid": "0b01100d13e075334994717fd29943f8",
+      "telegramId": 625340542,
+      "createdAt": "2025-11-07T15:46:00.224Z",
+      "expiresAt": "2025-11-07T16:01:00.224Z",
+      "claimed": false
+    }
+  ],
+  [
+    "ad7a0267e066571f8ce7d163a3b19694",
+    {
+      "rid": "ad7a0267e066571f8ce7d163a3b19694",
+      "telegramId": 625340542,
+      "createdAt": "2025-11-07T15:52:10.751Z",
+      "expiresAt": "2025-11-07T16:07:10.751Z",
+      "claimed": false
+    }
+  ],
+  [
+    "2dd275ad7f0dc6a2467a91b12f5854bb",
+    {
+      "rid": "2dd275ad7f0dc6a2467a91b12f5854bb",
+      "telegramId": 625340542,
+      "createdAt": "2025-11-07T15:54:00.398Z",
+      "expiresAt": "2025-11-07T16:09:00.398Z",
+      "claimed": false
+    }
+  ]
+]

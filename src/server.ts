@@ -2,9 +2,6 @@
 // Web server for handling Telegram login redirects + WebApp miniapp API
 
 import express, { Request, Response } from 'express';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
 import { tokenService } from './services/tokenService.js';
 import { ridService } from './services/ridService.js';
 import { verifyTelegramInitData } from './services/telegramValidation.js';
@@ -14,9 +11,6 @@ import {
   createIpRateLimiter,
   createCombinedRateLimiter,
 } from './middleware/rateLimit.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export function createLoginServer(port: number) {
   const app = express();
@@ -50,48 +44,6 @@ export function createLoginServer(port: number) {
   // Health check
   app.get('/health', (req, res) => {
     res.json({ status: 'ok' });
-  });
-
-  // Serve miniapp HTML
-  app.get('/miniapp.html', (req, res) => {
-    const miniappPath = path.join(__dirname, '..', 'public', 'miniapp.html');
-
-    try {
-      const html = fs.readFileSync(miniappPath, 'utf-8');
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.send(html);
-    } catch (err) {
-      console.error('❌ [Server] Failed to serve miniapp.html:', err);
-      res.status(404).send('Miniapp not found');
-    }
-  });
-
-  // Serve redirect page for Expo deep linking
-  app.get('/redirect.html', (req, res) => {
-    const redirectPath = path.join(__dirname, '..', 'public', 'redirect.html');
-
-    try {
-      const html = fs.readFileSync(redirectPath, 'utf-8');
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.send(html);
-    } catch (err) {
-      console.error('❌ [Server] Failed to serve redirect.html:', err);
-      res.status(404).send('Redirect page not found');
-    }
-  });
-
-  // Serve trampoline page for claim code login
-  app.get('/open-expo', (req, res) => {
-    const trampolinePath = path.join(__dirname, '..', 'public', 'open-expo.html');
-
-    try {
-      const html = fs.readFileSync(trampolinePath, 'utf-8');
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.send(html);
-    } catch (err) {
-      console.error('❌ [Server] Failed to serve open-expo.html:', err);
-      res.status(404).send('Open expo page not found');
-    }
   });
 
   // Login endpoint - redirects to app with token (validation happens on app side)

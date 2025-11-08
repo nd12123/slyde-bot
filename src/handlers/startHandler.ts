@@ -6,6 +6,7 @@ import { tokenService } from '../services/tokenService.js';
 
 export async function startCommandHandler(ctx: Context) {
   try {
+    // RID-based deep link flow implementation
     const telegramUserId = ctx.from?.id;
     const username = ctx.from?.username || 'User';
     const firstName = ctx.from?.first_name || 'Friend';
@@ -20,28 +21,30 @@ export async function startCommandHandler(ctx: Context) {
 
     // Generate a short claim code for login (e.g., "AB7K-39")
     // Returns both the code (for display) and hash (for storage)
-    const { claimCode, claimCodeHash } = tokenService.generateClaimCode(telegramUserId);
+    const { claimCode } = tokenService.generateClaimCode(telegramUserId);
     console.log(`🔐 [StartHandler] Generated claim code: ${claimCode}`);
 
-    // Build trampoline URL that will:
-    // 1. Receive the claim code
-    // 2. Verify it via /handshake/pin
-    // 3. Copy code to clipboard
-    // 4. Open clean Expo link
-    // Use TRAMPOLINE_URL env var (falls back to localhost for testing)
-    const trampolineBase = process.env.TRAMPOLINE_URL || 'http://localhost:3001';
-    const trampolineUrl = `${trampolineBase}/open-expo?cc=${encodeURIComponent(claimCodeHash)}`;
-    console.log(`🔗 [StartHandler] Trampoline URL: ${trampolineUrl}`);
+    // Also generate a pending RID for fallback time-based lookup
+    const pendingRID = tokenService.generatePendingRID(telegramUserId);
+    console.log(`📋 [StartHandler] Generated pending RID: ${pendingRID.substring(0, 8)}...`);
 
-    // The clean Expo URL (will be opened by trampoline after copying code to clipboard)
-    const expoUrl = `https://exp.host/@slyde/slyde`;
-    console.log(`🔗 [StartHandler] Expo URL (clean, no params): ${expoUrl}`);
+    // Generate button URL via Vercel trampoline bridge
+    // The trampoline will redirect to Expo Go with the proper deep link
+    const trampolineBridge = process.env.EXPO_BRIDGE_URL || 'https://slyde-exp-bridge.vercel.app';
+    const lanIp = process.env.EXPO_GO_LAN_IP || '192.168.1.134';
+    const lanPort = process.env.EXPO_GO_PORT || '8081';
+
+    // Button URL that Telegram accepts (HTTPS)
+    // Parameters: host, port, code (bridge expects 'host' not 'ip')
+    const expoAppUrl = `${trampolineBridge}?host=${encodeURIComponent(lanIp)}&port=${encodeURIComponent(lanPort)}&code=${encodeURIComponent(pendingRID)}`;
+    console.log(`🔗 [StartHandler] Vercel bridge URL: ${expoAppUrl}`);
+
+    // Log the actual Expo deep link for reference
+    const expoDeepLink = `exp://${lanIp}:${lanPort}/--/auth?code=${encodeURIComponent(pendingRID)}`;
+    console.log(`🔗 [StartHandler] Expo Go deep link (for Vercel bridge): ${expoDeepLink}`);
+
     console.log(`📋 [StartHandler] Claim code for TG ${telegramUserId}: ${claimCode}`);
-
-    // Magic login button goes to trampoline page
-    const magicLoginUrl = trampolineUrl;
-    // ExpoGo button can go directly to Expo or to trampoline (both work)
-    const expoGoUrl = trampolineUrl;
+    console.log(`📋 [StartHandler] Pending RID for TG ${telegramUserId}: ${pendingRID.substring(0, 8)}...`);
 
     const message = `
 <b>Welcome to Slyde!</b> 🎉
@@ -67,12 +70,8 @@ Click the button below to login to Slyde with your Telegram account!
       inline_keyboard: [
         [
           {
-            text: '🔗 Magic Login',
-            url: magicLoginUrl,
-          },
-          {
-            text: '🚀 Open in Expo Go',
-            url: expoGoUrl,
+            text: '🚀 Open Expo App',
+            url: expoAppUrl,
           },
         ],
         [
